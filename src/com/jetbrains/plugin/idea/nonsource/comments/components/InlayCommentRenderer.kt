@@ -3,6 +3,7 @@ package com.jetbrains.plugin.idea.nonsource.comments.components
 import com.intellij.openapi.editor.DefaultLanguageHighlighterColors
 import com.intellij.openapi.editor.Editor
 import com.intellij.openapi.editor.EditorCustomElementRenderer
+import com.intellij.openapi.editor.Inlay
 import com.intellij.openapi.editor.impl.ComplementaryFontsRegistry
 import com.intellij.openapi.editor.impl.EditorImpl
 import com.intellij.openapi.editor.impl.FontInfo
@@ -31,7 +32,7 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
         }
     }
 
-    override fun paint(editor: Editor, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
+    override fun paint(inlay: Inlay<*>, g: Graphics, targetRegion: Rectangle, textAttributes: TextAttributes) {
         if (comment.text == "") {
             return
         }
@@ -42,6 +43,7 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
             text += "..."
         }
 
+        val editor = inlay.editor
         val attributes = editor.colorsScheme.getAttributes(DefaultLanguageHighlighterColors.INLINE_PARAMETER_HINT) ?: return
 
         val fontInfo = getFontInfo(editor)
@@ -79,8 +81,8 @@ class InlayCommentRenderer(val comment: Comment) : EditorCustomElementRenderer {
 //        g.drawString(comment.text, targetRegion.x, targetRegion.y + metrics.ascent)
     }
 
-    override fun calcWidthInPixels(editor: Editor): Int {
-        val fontInfo = getFontInfo(editor)
+    override fun calcWidthInPixels(inlay: Inlay<*>): Int {
+        val fontInfo = getFontInfo(inlay.editor)
         return maxOf(1, fontInfo.fontMetrics().stringWidth(comment.text) + 14)
     }
 }
